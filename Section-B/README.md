@@ -26,7 +26,7 @@ To populate the database with sample data run:
 docker-compose exec -w /home/app/web python manage.py add_tweets
 ```
 Then proceed to http://localhost:1337 to view the app's search page:
-![screenshot1](Screenshot1.png)
+![screenshot1](Screenshot1.png)  
 
 A search on search bar will yield results like below:
 ![screenshot2](Screenshot2.png)
@@ -35,7 +35,7 @@ A search on search bar will yield results like below:
 
 ### 1.1. Enviroment Setup.
 First create the project folder and then a python virtual enviroment. Proceed to to activate the enviroment.
-And then install the lastest version of Django.
+And then install the latest version of Django.
 ```bash
 mkdir Section-B && cd Section-B
 python3.6 -m venv/env
@@ -44,7 +44,7 @@ pip install django==3.25
 ```
 
 ### 1.2 Django Project Setup.
-Then start the django project and do the inital migrations of the bundled django models.Proceed to run the server to verify the installation is working properly. To do so, navigate to http://localhost:8000/ and check for the Django welcome screen.
+Then start the Django project and do the initial migrations of the bundled django models. Proceed to run the server to verify the installation is working properly. To do so, navigate to http://localhost:8000/ and check for the Django welcome screen.
 ```bash
 django-admin startproject full_text_search.
 python manage.py migrate
@@ -54,11 +54,12 @@ python manage.py runserver.
 #### 2. Docker Setup.
 
 ### 2.1 Initial Django Dockerfile
-Deactivate the python enviroment and create a Dockerfile in the /full_text_search directory.Then proceed to pull the official python3.6 alphine image. Then create a working directory for the Django application in the container. Then set:  
-	a) ENV PYTHONDONTWRITEBYTECODE 1 - To set that the python process doesn't write its initial write byte code on the disk  as it runs only once. Such byte code is written to be used by later invocations of the python process.
+Deactivate the python enviroment and create a Dockerfile in the /full_text_search directory.Then proceed to pull the official python3.6 alphine image. Then create a working directory for the Django application in the container.  
+ Then set:  
+	a) ENV PYTHONDONTWRITEBYTECODE 1 - To set that the python process doesn't write its initial write byte code on the disk  as it runs only once. Such byte code is written to be used by later invocations of the python process.  
 	b) ENV PYTHONUNBUFFERED 1 - To ensure all python/django logs are sent to terminal even if crashes happen.   
 
-Also, install pycopg2 dependencies and include pycppg2 in requiremnts.txt to facilitate the creation of the postgres database.Then proceed to upgrade pip to ease installation of the other dependencies. Copy the requiremnts.txt from the Django project and install them. Then copy the Django project files into the container. 
+Also, install pycopg2 dependencies and include pycopg2 in requirements.txt to facilitate the creation of the Postgres database.Then proceed to upgrade pip to ease installation of the other dependencies. Copy the requirements.txt from the Django project and install them. Then copy the Django project files into the container. 
 
 
 ```bash
@@ -87,7 +88,7 @@ COPY . .
 
 ### 2.2 Initial docker-compose.yml for Django.
 In the root project folder create a docker-compose file to orchestrate the containers. In there define the django project folder,
-the local server,.env file, port and the directory in the docker container. Also set limits to how much of the localhost's memory is available to the container to prevent from consuming all of it. 
+the local server, the .env file, port and the directory in the docker container. Also set limits to how much of the localhost's memory is available to the container to prevent it from consuming all of it. 
 
 ``` bash
 version: '3'
@@ -131,7 +132,7 @@ Then you can build an image with : ```docker-compose build``` whilst in  the pro
 To run the container detached from terminal run : ```docker-compose up -d```.
 
 ### 2.3 Django Database Setup.
-Update the DATABASES dictionary in Django settings.py with postgres settings defined in an .env file to replace the default sqlite database settings.
+Update the DATABASES dictionary in Django settings.py with Postgres settings defined in an .env file to replace the default sqlite database settings.
 
 ```python
 DATABASES = {
@@ -162,7 +163,7 @@ SQL_PORT=5432
 ```
 
 ### 2.4 Postgres Docker Setup.
-In the root project docker-compose.yml, under services, write the script to build the Postgres container.In the script also define a volume for persisting data through containers.
+In the root project docker-compose.yml, under services, write the script to build the Postgres container. In the script also define a volume for persisting data through containers.
 
 ```bash
 db:
@@ -189,7 +190,7 @@ POSTGRES_DB=text_search_db
 ```
 
 ### 2.5 ENTRYPOINT for Postgres in the Django Dockerfile.
-Write a bash script to ensure that the postgres database is healthy and running before connecting to it with Django.
+Write a bash script to ensure that the Postgres database is healthy and running before connecting to it with Django.
 Also during development, flush the database and migrate anew every time you spin up the containers.
 ```bash
 #!/bin/sh
@@ -264,7 +265,7 @@ Then run the migrations:
 compose exec -w usr/src/app web python manage.py migrate viral_tweet.
 ```
 ### 3.2  Views
-Create a SearchResults view to process the search queries. The search query shall search for the phrase in both the user_handle and tweet fields in the ViralTweet model, then return a ranked list of the tweets based on how close the searched words appear.
+Create a SearchResults view to process the search queries. The search query shall search for the phrase in both the 'user_handle' and 'tweet' fields in the ViralTweet model, then return a ranked list of the tweets based on how close the searched words appear.
 
 ```python
 class SearchResults(ListView):
@@ -301,6 +302,68 @@ urlpatterns = [
 ### 3.4 Templates and Static.
 Create a folder named static within the viral_tweets module and put your bootstrap files in there. Create another folder
 named templates and create your html templates.
+
+_**base.html**_
+Here you link to the bootstrap files in the static folder.
+```html
+<!DOCTYPE html>
+{%load static%}
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>{% block title %} Movie Reviews {% endblock %} </title>
+	<link rel="stylesheet" href="{% static 'bootstrap.min.css'%}">
+	<script type="text/javascript" src="{% static 'bootstrap.min.js'%}"></script>
+</head>
+<body>
+	<div class="container border-dark">
+		{% block main%}{%endblock%}
+	</div>
+	
+</body>
+</html>
+```  
+
+_**search_tweets.html*_
+This template shall inherit the base.html. It shall also loop over the 'tweets' queryset object from the SearchResults view to display them.
+```html
+{% extends 'base.html'%}
+{% block title %} Search Tweets {% endblock %}
+{% block main%}
+    <h1 class="text-gray-dark text-center py-3"> A record of Viral Tweets. </h1>
+
+    <form class="form col-5 mx-2 pt-3 mb-5" action="{% url 'search-results' %}" method="get">
+        <input 
+            type="search" 
+            class="form-control" 
+            name="q" 
+            placeholder="Search tweets, users, phrases ..." >
+    </form>
+
+    {% if tweets %}
+        {% for tweet in tweets %}
+            <div class="row">
+                <div class="col-6 offset-2">
+                    <div class="card bg-transparent border-info my-2">
+                        <div class="card-body">
+                            <blockquote class="blockquote mb-0">
+                                <p>"{{tweet.tweet}}"</p>
+                                <footer class="blockquote-footer">{{tweet.user_handle}}</footer>
+                            </blockquote>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        
+    {% else %}
+        <div class="alert alert-info text-center col-5 offset-2 mt-5" role="alert">
+            There are no tweets yet (-:
+        </div>
+    {% endif %}
+{% endblock %}
+```
 
 ## 4.0 Deployment on a Production Servers.
 The site shall be deployed on a uwsgi/nginx server setup. The Nginx server shall act as a reverse proxy for the uwsgi
@@ -498,29 +561,3 @@ volumes:
 
 
 ```
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-[]: //home/jack/Pictures/screenshot1
