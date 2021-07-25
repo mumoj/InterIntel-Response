@@ -1,6 +1,6 @@
-### Encryption/Hashing Methods.
+# Encryption/Hashing Methods.
 
-#### (i) One Way Method -  Hashing(SHA-256)
+## (i) One Way Method -  Hashing(SHA-256)
 SHA stands for Secure Hash Algorithm. Cryptographic hash functions are designed to produce irreversible and unique hashes.
 Irreversible means you can't derive the original data from the hash and unique means that two different data item produce 
 two different hash values. SHA-256 is deterministic in such a way that given the same piece of data it would produce 
@@ -17,13 +17,13 @@ def encrypt_script(string):
     hash_value = hashlib.sha256(string.encode()).hexdigest()
     return hash_value
 
-
+# Example code
 print(encrypt_script(string="Garbage In Garbage Out."))
 # b5146064da5e3b3a239b5268b78b4b940e4611a0677c00c326a5965f16087183
 ``` 
  
  
- #### (ii) Two Way Method - Symmetric Encryption(AES).
+## (ii) Two Way Method - Symmetric Encryption(AES).
  Symmetric encryption uses one key to both encrypt and decrypt data. AES stands for Advanced Encryption Standard. It 
  uses a 128 bit key to encrypt information into an undecipherable cipher-text which can only be decrypted by that key.
    
@@ -69,6 +69,13 @@ class AESCipher(object):
         """Remove extra padded text to complete decryption"""
         last_character = plain_text[len(plain_text) - 1:]
         return plain_text[:-ord(last_character)]
+
+# Example code
+cipher = AESCipher(key='alas')
+cipher.encrypt('Garbage In Garbage Out')
+# '4fHBBSrK/8MX7EJEZb2hLbwMS4/xsXR7XIQ8pF3OI9rgthfk//0Hx7rpkYYk1ZYn'
+cipher.decrypt('4fHBBSrK/8MX7EJEZb2hLbwMS4/xsXR7XIQ8pF3OI9rgthfk//0Hx7rpkYYk1ZYn')
+# 'Garbage In Garbage Out'
 ```
  
  

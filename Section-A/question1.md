@@ -1,5 +1,5 @@
-### Examples of Integration Protocols.
-#### (i) REST API
+# Examples of Integration Protocols.
+## (i) REST API
 A REST API is an Application Programming Interface that conforms to the Representational State Transfer Architectural 
 design principals first set forth by Dr.Roy Fielding in 2000. An API can be defined as mechanism that allows a service
 or an application to access a resource in different application or service. A client is the application/service 
@@ -69,7 +69,7 @@ def unregister_attendant(national_id):
 ```
  
 
-#### (ii) GraphQL
+## (ii) GraphQL
 GraphQL is a data query and manipulation language for APIs. It consists of a type system, query language and execution 
 semantics, static validation and type introspection. It allows clients to define the structure of the data they
 want returned and the exact structure is returned from the server without the overhead of other irrelevant data. In this 
@@ -111,7 +111,7 @@ class Query(graphene.ObjectTpe):
     def resolve_attendee(self, info, national_id):
         return Attendee.objects.get(pk=national_id)
 
-# To post or update or delete data, mutations are used
+To post or update or delete data, mutations are used:
 
 class DeleteAttendee(graphene.Mutation):
     """A example delete mutation"""
@@ -170,7 +170,7 @@ mutation deleteMutation {
 }
 ```
 
-#### (iii) Simple Object Access Protocol(SOAP)
+## (iii) Simple Object Access Protocol(SOAP)
 SOAP is a communication protocol for exchanging structured information in the implementation of web services.SOAP 
 messages are purely encoded in XML which makes them language and platform independent. It relies on application layer 
 protocols; most often HTTP, though others like SMTP may be used. 

@@ -1,4 +1,4 @@
-### A Data Streaming Notification Application.
+# A Data Streaming Notification Application.
 Streaming data refers to data that is continuously generated, usually at high velocity and in high volumes. Such data is
 often from  multiple sources. To ingest and process such a high load of real time data, a streaming data pipeline 
 is needed. Apache Kafka is one platform that facilitates such an architecture. It is an open source distributed data 
@@ -33,6 +33,9 @@ The aggregated stream is then published to another Kafka cluster and finally con
 server client. The server client may then stream the tweets/notifications to the frontend via the WebSocket protocol.
 All this is done at near network speed from the moment a tweet is posted/a like event occurs.
 
+_**An illustration**_
+
+<img src="kafka.png" alt="kafka_illustration" height="500" width="500">
 
 
 
