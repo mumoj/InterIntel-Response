@@ -10,7 +10,7 @@ Then change directory into the Section-B folder:
 cd Section-B/
 ```  
 
-Make sure you've docker and docker compose installed to spin the containers:
+Make sure you've docker and docker compose installed to spin up the containers:
 ```
 docker-compose up -d --build
 ```
