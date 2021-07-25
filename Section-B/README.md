@@ -367,10 +367,10 @@ This template shall inherit the base.html. It shall also loop over the 'tweets' 
 {% endblock %}
 ```
 
-## 4.0 Deployment on a Production Servers.
-The site shall be deployed on a uwsgi/nginx server setup. The Nginx server shall act as a reverse proxy for the uwsgi
-sever; meaning it shall sit between the uwsgi server and clients seeking the site's resources. It shall also serve the
-site's static files.
+## 4.0 Deployment on Production Servers.
+The site shall be deployed on a uwsgi/nginx server setup. The nginx server shall act as a reverse proxy for the uwsgi
+sever; meaning it shall sit between the uwsgi server and clients seeking the site's resources and share some of the load. It is also particulary  there to 
+serve the site's static files as the uwsgi server is incapable of doing so.
 
 ### 4.1 Nginx Set Up
 Create a nginx folder in the root project folder and add a Dockerfile. In there download the nginx alphine image, 
