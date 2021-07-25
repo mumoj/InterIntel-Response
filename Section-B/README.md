@@ -24,12 +24,14 @@ docker-compose exec -w /home/app/web python manage.py migrate
 To populate the database with sample data run:
 ```
 docker-compose exec -w /home/app/web python manage.py add_tweets
-```
+```  
+
 Then proceed to http://localhost:1337 to view the app's search page:
-![screenshot1](Screenshot1.png)  
+<img src="Screenshot1.png" alt="screenshot1" width="700" height="500" />    
+
 
 A search on search bar will yield results like below:
-![screenshot2](Screenshot2.png)
+<img src="Screenshot2.png" alt="screenshot2" width="700" height="500"/> 
 
 ## 1.0 Project Setup.
 
@@ -51,7 +53,7 @@ python manage.py migrate
 python manage.py runserver.
 ```
 
-#### 2. Docker Setup.
+## 2. Docker Setup.
 
 ### 2.1 Initial Django Dockerfile
 Deactivate the python enviroment and create a Dockerfile in the /full_text_search directory.Then proceed to pull the official python3.6 alphine image. Then create a working directory for the Django application in the container.  
@@ -303,7 +305,7 @@ urlpatterns = [
 Create a folder named static within the viral_tweets module and put your bootstrap files in there. Create another folder
 named templates and create your html templates.
 
-_**base.html**_
+_**base.html**_  
 Here you link to the bootstrap files in the static folder.
 ```html
 <!DOCTYPE html>
@@ -325,7 +327,7 @@ Here you link to the bootstrap files in the static folder.
 </html>
 ```  
 
-_**search_tweets.html*_
+_**search_tweets.html**_  
 This template shall inherit the base.html. It shall also loop over the 'tweets' queryset object from the SearchResults view to display them.
 ```html
 {% extends 'base.html'%}
