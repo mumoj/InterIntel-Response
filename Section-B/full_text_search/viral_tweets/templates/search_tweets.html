@@ -1,0 +1,35 @@
+{% extends 'base.html'%}
+{% block title %} Search Tweets {% endblock %}
+{% block main%}
+    <h1 class="text-gray-dark text-center py-3"> A record of Viral Tweets. </h1>
+
+    <form class="form col-5 mx-2 pt-3 mb-5" action="{% url 'search-results' %}" method="get">
+        <input 
+            type="search" 
+            class="form-control" 
+            name="q" 
+            placeholder="Search tweets, users, phrases ..." >
+    </form>
+
+    {% if tweets %}
+        {% for tweet in tweets %}
+            <div class="row">
+                <div class="col-6 offset-2">
+                    <div class="card bg-transparent border-info my-2">
+                        <div class="card-body">
+                            <blockquote class="blockquote mb-0">
+                                <p>"{{tweet.tweet}}"</p>
+                                <footer class="blockquote-footer">{{tweet.user_handle}}</footer>
+                            </blockquote>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        
+    {% else %}
+        <div class="alert alert-info text-center col-5 offset-2 mt-5" role="alert">
+            There are no tweets yet (-:
+        </div>
+    {% endif %}
+{% endblock %}
