@@ -10,8 +10,11 @@ Then change directory into the Section-B folder:
 cd Section-B/
 ```  
 
-Make sure you've docker and docker compose installed to spin up the containers:
-```
+Make sure you've docker and docker compose installed to spin up the containers,then run:
+
+```bash
+export DOCKER_BUILDKIT=1
+ export COMPOSE_DOCKER_CLI_BUILD=1
 docker-compose up -d --build
 ```
 
@@ -46,7 +49,9 @@ pip install django==3.25
 ```
 
 ### 1.2 Django Project Setup.
-Then start the Django project and do the initial migrations of the bundled django models. Proceed to run the server to verify the installation is working properly. To do so, navigate to http://localhost:8000/ and check for the Django welcome screen.
+Then start the Django project and do the initial migrations of the bundled django models. Proceed to run 
+the server to verify the installation is working properly. To do so, navigate to http://localhost:8000/ 
+and check for the Django welcome screen.
 ```bash
 django-admin startproject full_text_search.
 python manage.py migrate
@@ -56,12 +61,18 @@ python manage.py runserver.
 ## 2. Docker Setup.
 
 ### 2.1 Initial Django Dockerfile
-Deactivate the python enviroment and create a Dockerfile in the /full_text_search directory.Then proceed to pull the official python3.6 alphine image. Then create a working directory for the Django application in the container.  
- Then set:  
-	a) ENV PYTHONDONTWRITEBYTECODE 1 - To set that the python process doesn't write its initial write byte code on the disk  as it runs only once. Such byte code is written to be used by later invocations of the python process.  
+Deactivate the python enviroment and create a Dockerfile in the /full_text_search directory.
+Then proceed to pull the official python3.6 alphine image. Then create a working directory for 
+the Django application in the container.  
+Then set:  
+	a) ENV PYTHONDONTWRITEBYTECODE 1 - To set that the python process doesn't write its initial 
+	write byte code on the disk  as it runs only once. Such byte code is written to be used by later 
+	invocations of the python process.  
 	b) ENV PYTHONUNBUFFERED 1 - To ensure all python/django logs are sent to terminal even if crashes happen.   
 
-Also, install pycopg2 dependencies and include pycopg2 in requirements.txt to facilitate the creation of the Postgres database.Then proceed to upgrade pip to ease installation of the other dependencies. Copy the requirements.txt from the Django project and install them. Then copy the Django project files into the container. 
+Also, install pycopg2 dependencies and include pycopg2 in requirements.txt to facilitate the creation of the Postgres database.
+Then proceed to upgrade pip to ease installation of the other dependencies. Copy the requirements.txt from the Django 
+project and install them. Then copy the Django project files into the container. 
 
 
 ```bash
@@ -89,8 +100,10 @@ COPY . .
 ```  
 
 ### 2.2 Initial docker-compose.yml for Django.
-In the root project folder create a docker-compose file to orchestrate the containers. In there define the django project folder,
-the local server, the .env file, port and the directory in the docker container. Also set limits to how much of the localhost's memory is available to the container to prevent it from consuming all of it. 
+In the root project folder create a docker-compose file to orchestrate the containers. In there define 
+the django project folder,the local server, the .env file, port and the directory in the docker container. 
+Also set limits to how much of the localhost's memory is available to the container to prevent it from 
+consuming most of it and hindering other processes. 
 
 ``` bash
 version: '3'
@@ -134,7 +147,8 @@ Then you can build an image with : ```docker-compose build``` whilst in  the pro
 To run the container detached from terminal run : ```docker-compose up -d```.
 
 ### 2.3 Django Database Setup.
-Update the DATABASES dictionary in Django settings.py with Postgres settings defined in an .env file to replace the default sqlite database settings.
+Update the DATABASES dictionary in Django settings.py with Postgres settings defined in an .env file 
+to replace the default sqlite database settings.
 
 ```python
 DATABASES = {
@@ -165,7 +179,8 @@ SQL_PORT=5432
 ```
 
 ### 2.4 Postgres Docker Setup.
-In the root project docker-compose.yml, under services, write the script to build the Postgres container. In the script also define a volume for persisting data through containers.
+In the root project docker-compose.yml, under services, write the script to build the Postgres container. 
+In the script also define a volume for persisting data through containers.
 
 ```bash
 db:
@@ -267,7 +282,9 @@ Then run the migrations:
 compose exec -w usr/src/app web python manage.py migrate viral_tweet.
 ```
 ### 3.2  Views
-Create a SearchResults view to process the search queries. The search query shall search for the phrase in both the 'user_handle' and 'tweet' fields in the ViralTweet model, then return a ranked list of the tweets based on how close the searched words appear.
+Create a SearchResults view to process the search queries. The search query shall search for the phrase 
+in both the 'user_handle' and 'tweet' fields in the ViralTweet model, then return a ranked list of the 
+tweets based on how close the searched words appear.
 
 ```python
 class SearchResults(ListView):
@@ -302,8 +319,8 @@ urlpatterns = [
 ```
 
 ### 3.4 Templates and Static.
-Create a folder named static within the viral_tweets module and put your bootstrap files in there. Create another folder
-named templates and create your html templates.
+Create a folder named static within the viral_tweets module and put your bootstrap files in there.
+Create another folder named templates and create your html templates.
 
 _**base.html**_  
 Here you link to the bootstrap files in the static folder.
@@ -328,7 +345,8 @@ Here you link to the bootstrap files in the static folder.
 ```  
 
 _**search_tweets.html**_  
-This template shall inherit the base.html. It shall also loop over the 'tweets' queryset object from the SearchResults view to display them.
+This template shall inherit the base.html. It shall also loop over the 'tweets' queryset object from 
+the SearchResults view to display them.
 ```html
 {% extends 'base.html'%}
 {% block title %} Search Tweets {% endblock %}
@@ -369,8 +387,8 @@ This template shall inherit the base.html. It shall also loop over the 'tweets' 
 
 ## 4.0 Deployment on Production Servers.
 The site shall be deployed on a uwsgi/nginx server setup. The nginx server shall act as a reverse proxy for the uwsgi
-sever; meaning it shall sit between the uwsgi server and clients seeking the site's resources and share some of the load. It is also particularly  there to 
-serve the site's static files as the uwsgi server is incapable of doing so.
+sever; meaning it shall sit between the uwsgi server and clients seeking the site's resources and share some of the load. 
+It is also particularly  there to serve the site's static files as the uwsgi server is incapable of doing so.
 
 ### 4.1 Nginx Set Up
 Create a nginx folder in the root project folder and add a Dockerfile. In there download the nginx alphine image, 
@@ -439,7 +457,8 @@ vacuum = True
 ## 5.0  The Final Django Project Dockerfile
 After installing all the dependencies and creating the neccessary project folders in the docker container, ownership of
 the project is changed to a user with non-root access. This is to prevent any attackers from gaining access to the 
-host machine were they to break into the container.
+host machine were they to break into the container. BUILDKIT is also enabled to cache pip installations the first time 
+and avoid downloading them everytime you change something in the requirements.txt
 ```bash
 # syntax = docker/dockerfile:1.2 # Enable BUILDKIT caching.
 # pull official base image
