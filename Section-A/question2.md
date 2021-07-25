@@ -35,7 +35,7 @@ All this is done at near network speed from the moment a tweet is posted/a like 
 
 _**An illustration**_
 
-<img src="kafka.png" alt="kafka_illustration" height="500" width="500">
+<img src="kafka.png" alt="kafka_illustration" height="500" width="700">
 
 
 
