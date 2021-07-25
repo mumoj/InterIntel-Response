@@ -1,11 +1,36 @@
 ##### A Django-Postgres Application Implementing Full Text Search.
-#### 0.0  How to Run the Project.  
+#### 0.0  How to Run the Application.
+To download the repository run:
+```bash
+git clone https://github.com/mumoj/InterIntel-Response
+```  
+
+Then change directory into the Section-B folder:
+```bash
+cd Section-B/
+```  
+
+Make sure you've docker and docker compose installed to spin the containers:
+```
+docker-compose up -d --build
+```
+
+Then makemigrations for the django models and migrate them:
+```
+docker-compose exec -w /home/app/web python manage.py makemigrations
+docker-compose exec -w /home/app/web python manage.py migrate
+```  
+
+To populate the database with sample data run:
+```
+docker-compose exec -w /home/app/web python manage.py add_tweets
+```
 
 #### 1.0 Project Setup.
 
 ### 1.1. Enviroment Setup.
-First create the project folder and the python virtual enviroment. Proceed to to activate the enviroment.
-And then install the lastest version of Django and Pycopg2 for the Postgres database.
+First create the project folder and then a python virtual enviroment. Proceed to to activate the enviroment.
+And then install the lastest version of Django.
 ```bash
 mkdir Section-B && cd Section-B
 python3.6 -m venv/env
@@ -19,17 +44,16 @@ Then start the django project and do the inital migrations of the bundled django
 django-admin startproject full_text_search.
 python manage.py migrate
 python manage.py runserver.
-
 ```
 
 #### 2. Docker Setup.
 
 ### 2.1 Initial Django Dockerfile
-Deactivate the python enviroment and create a Dockerfile in the /full_text_search directory.Then proceed to pull the official python3.6 alphine image. Then create a working directory for the Django application. Then set:  
+Deactivate the python enviroment and create a Dockerfile in the /full_text_search directory.Then proceed to pull the official python3.6 alphine image. Then create a working directory for the Django application in the container. Then set:  
 	a) ENV PYTHONDONTWRITEBYTECODE 1 - To set that the python process doesn't write its initial write byte code on the disk  as it runs only once. Such byte code is written to be used by later invocations of the python process.
 	b) ENV PYTHONUNBUFFERED 1 - To ensure all python/django logs are sent to terminal even if crashes happen.   
 
-Also, install pycopg2 dependencies to facilitate the creation of the postgres database.Then proceed to upgrade pip to ease installation of the other dependencies. Copy the requiremnts.txt from the Django project and install them. Then copy the Django project files into the container. 
+Also, install pycopg2 dependencies and include pycppg2 in requiremnts.txt to facilitate the creation of the postgres database.Then proceed to upgrade pip to ease installation of the other dependencies. Copy the requiremnts.txt from the Django project and install them. Then copy the Django project files into the container. 
 
 
 ```bash
@@ -54,11 +78,11 @@ RUN pip install -r requirements.txt
 
 # copy project
 COPY . .
-```
+```  
+
 ### 2.2 Initial docker-compose.yml for Django.
-In the root project folder create a docker-compose file to orchestrate the containers. In there define django project folder,
-the local server, port and its directory in the container. Also set limits to how much of the developement's server's
-memory is available to the container to prevent from consuming all of it. 
+In the root project folder create a docker-compose file to orchestrate the containers. In there define the django project folder,
+the local server,.env file, port and the directory in the docker container. Also set limits to how much of the localhost's memory is available to the container to prevent from consuming all of it. 
 
 ``` bash
 version: '3'
@@ -82,7 +106,7 @@ services:
           memory: 100M
 ```
 
-Update the Django settings.py with the .env variables.The secret key is put in .env file for security purposes.
+Update the Django settings.py with the .env variables.The secret key is put in a .env file for security.
 
 ```python
 SECRET_KEY = os.environ.get("SECRET_KEY")
@@ -98,10 +122,8 @@ SECRET_KEY=foo
 DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
 
 ```
-Then you can build an image with : ```docker-compose build```
-To run the container detached from terminal run : ```docker-compose up -d```
-
-
+Then you can build an image with : ```docker-compose build``` whilst in  the project root directory.
+To run the container detached from terminal run : ```docker-compose up -d```.
 
 ### 2.3 Django Database Setup.
 Update the DATABASES dictionary in Django settings.py with postgres settings defined in an .env file to replace the default sqlite database settings.
@@ -135,7 +157,7 @@ SQL_PORT=5432
 ```
 
 ### 2.4 Postgres Docker Setup.
-In the python project Dockerfile, under services, write the script to build the Postgres container.In the script also define a volume for persisting data through containers.
+In the root project docker-compose.yml, under services, write the script to build the Postgres container.In the script also define a volume for persisting data through containers.
 
 ```bash
 db:
@@ -163,7 +185,7 @@ POSTGRES_DB=text_search_db
 
 ### 2.5 ENTRYPOINT for Postgres in the Django Dockerfile.
 Write a bash script to ensure that the postgres database is healthy and running before connecting to it with Django.
-Also, during development flush the database and migrate anew every time you spin up the containers.
+Also during development, flush the database and migrate anew every time you spin up the containers.
 ```bash
 #!/bin/sh
 
@@ -183,7 +205,7 @@ python manage.py migrate
 
 exec "$@"
 ```
-Proceed change permmissions of the bash file to allows its execution like so: 
+Proceed change permmissions of the bash file to allows its execution.
 
 ```bash
 chmod +x full_text_search/entrypoint.sh
@@ -191,7 +213,7 @@ chmod +x full_text_search/entrypoint.sh
 Finally add it to run at the and of the Django Dockerfile like so: ```ENTRYPOINT ["/usr/src/app/entrypoint.sh"]```.
 
 
-At this point, you can run ```docker-compose up -d --build``` to spin up the two container for development on the Localhost.
+At this point, you can run ```docker-compose up -d --build``` to spin up the two containers for development on the Localhost.
 To view the logs for the project run ```docker-compose logs -f ```.
 
 
@@ -199,7 +221,7 @@ To view the logs for the project run ```docker-compose logs -f ```.
 
 To create a Django app to implement the search functionality run: 
 ```bash
-compose exec -w usr/src/app web python manage.py startapp
+compose exec -w usr/src/app web python manage.py startapp viral_tweets
 ```
 Proceed to the register your application in Django setting's INSTALLED_APPS dictionary as demonstrated below:
 ```python
@@ -262,7 +284,7 @@ def get_queryset(self):
 ```
 
 ### 3.3 Urls
-Define the url path for your search page in full_text_search.settings the web pages like so:
+Define the url path for your search page in full_text_search.settings like below:
 ```python 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -278,10 +300,10 @@ named templates and create your html templates.
 #### 4.0 Deployment on a Production Servers.
 The site shall be deployed on a uwsgi/nginx server setup. The Nginx server shall act as a reverse proxy for the uwsgi
 sever; meaning it shall sit between the uwsgi server and clients seeking the site's resources. It shall also serve the
-site's static resources as the uwsgi server can't.
+site's static files.
 
 ### 4.1 Nginx Set Up
-Create a nginx folder in the root project folder and add a Docker file. In there download the nginx alphine image, 
+Create a nginx folder in the root project folder and add a Dockerfile. In there download the nginx alphine image, 
 delete its default settings and replace them with custom ones. Also download the uwsgi_params file and copy it into the
 nginx container.
 
@@ -325,9 +347,9 @@ RUN apk update \
     && apk add linux-headers pcre-dev
 ```
 
-Then add uwsgi to the requirement.txt and the uwsgi.ini file to the django project folder. The uwsgi.ini file defines 
+Then add uwsgi to requirements.txt and the uwsgi.ini file to the django project folder. The uwsgi.ini file defines 
 the location of the wsgi.py module,the number of processes(workers) to assign to the server, the server's socket, 
-the file to write the server's PIDs and whether to clean up temporary file created on 
+the file to write the server's PIDs and whether to clean up temporary files/sockets created on 
 shutdown of the server(the vacuum option.). It also has the master option which defines a master process for managing
 the respwaning of workers.
 
@@ -406,7 +428,7 @@ ENTRYPOINT ["/home/app/web/entrypoint.sh"]
 
 #### 6.0 The Final Docker-Compose file.
 A Nginx container is finally defined with its port, a volume for static files and memory limitations. The command for
-running the web app is also changed to uwsgi. Also change the .env file for web app to the production one to disable
+running the web app is also changed to uwsgi. Also change the .env file for  the web app to the production one to disable
 debugging mode. 
 
 ```bash
