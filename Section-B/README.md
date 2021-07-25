@@ -1,5 +1,5 @@
-##### A Django-Postgres Application Implementing Full Text Search.
-#### 0.0  How to Run the Application.
+# A Django-Postgres Application Implementing Full Text Search.
+## 0.0  How to Run the Application.
 To download the repository run:
 ```bash
 git clone https://github.com/mumoj/InterIntel-Response
@@ -25,8 +25,13 @@ To populate the database with sample data run:
 ```
 docker-compose exec -w /home/app/web python manage.py add_tweets
 ```
+Then proceed to http://localhost:1337 to view the app's search page:
+![screenshot1](Screenshot1.png)
 
-#### 1.0 Project Setup.
+A search on search bar will yield results like below:
+![screenshot2](Screenshot2.png)
+
+## 1.0 Project Setup.
 
 ### 1.1. Enviroment Setup.
 First create the project folder and then a python virtual enviroment. Proceed to to activate the enviroment.
@@ -217,7 +222,7 @@ At this point, you can run ```docker-compose up -d --build``` to spin up the two
 To view the logs for the project run ```docker-compose logs -f ```.
 
 
-#### 3. The Viral_tweet App
+## 3.0 The Viral_tweet App
 
 To create a Django app to implement the search functionality run: 
 ```bash
@@ -297,7 +302,7 @@ urlpatterns = [
 Create a folder named static within the viral_tweets module and put your bootstrap files in there. Create another folder
 named templates and create your html templates.
 
-#### 4.0 Deployment on a Production Servers.
+## 4.0 Deployment on a Production Servers.
 The site shall be deployed on a uwsgi/nginx server setup. The Nginx server shall act as a reverse proxy for the uwsgi
 sever; meaning it shall sit between the uwsgi server and clients seeking the site's resources. It shall also serve the
 site's static files.
@@ -315,7 +320,7 @@ COPY nginx.conf /etc/nginx/conf.d
 
 COPY uwsgi_params /etc/nginx/uwsgi_params
 ```
-## 4.1.1  Custom Nginx Config file
+_**Custom Nginx Config file**_
 This file defines the port to listen to the uwsgi server from in the 'upstream django' section. It also defines Nginx
 own port,server_name, as well as the address of the site's static files and the address of the main site.  
 ```editorconfig
@@ -366,7 +371,7 @@ pidfile = master.pid
 vacuum = True
 ```
 
-#### 5.0  The Final Django Project Dockerfile
+## 5.0  The Final Django Project Dockerfile
 After installing all the dependencies and creating the neccessary project folders in the docker container, ownership of
 the project is changed to a user with non-root access. This is to prevent any attackers from gaining access to the 
 host machine were they to break into the container.
@@ -426,7 +431,7 @@ USER app
 ENTRYPOINT ["/home/app/web/entrypoint.sh"]
 ```
 
-#### 6.0 The Final Docker-Compose file.
+## 6.0 The Final Docker-Compose file.
 A Nginx container is finally defined with its port, a volume for static files and memory limitations. The command for
 running the web app is also changed to uwsgi. Also change the .env file for  the web app to the production one to disable
 debugging mode. 
@@ -516,3 +521,6 @@ volumes:
 
 
 
+
+
+[]: //home/jack/Pictures/screenshot1
