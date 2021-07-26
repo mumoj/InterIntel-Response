@@ -403,7 +403,7 @@ COPY nginx.conf /etc/nginx/conf.d
 
 COPY uwsgi_params /etc/nginx/uwsgi_params
 ```
-_**Custom Nginx Config file**_
+_**Custom Nginx Config file**_  
 This file defines the port to listen to the uwsgi server from in the 'upstream django' section. It also defines Nginx
 own port,server_name, as well as the address of the site's static files and the address of the main site.  
 ```editorconfig
