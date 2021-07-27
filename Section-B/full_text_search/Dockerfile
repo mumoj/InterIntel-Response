@@ -17,10 +17,6 @@ RUN apk update \
 RUN apk update \
     && apk add linux-headers pcre-dev
 
-# install Django dependencies and cache them
-COPY ./requirements.txt .
-RUN --mount=type=cache,target=/root/.cache \
-    pip  install -r requirements.txt
 
 # create directory for the app user
 RUN mkdir -p /home/app
@@ -36,6 +32,11 @@ RUN mkdir $APP_HOME
 # create staticfiles folder
 RUN mkdir $APP_HOME/staticfiles 
 WORKDIR $APP_HOME
+
+# install Django dependencies and cache them
+COPY ./requirements.txt .
+RUN --mount=type=cache,target=/root/.cache \
+    pip  install -r requirements.txt
 
 # Copy Django project.
 COPY . $APP_HOME
